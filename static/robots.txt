@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /static/skiing.jpg
+Disallow: /static/top_achievers.png
+Disallow: /static/Gaelic%20Football.png
+Disallow: /static/dickeystown.png
+Disallow: /static/pres_award.png
+Disallow: /static/gala.png
+Disallow: /static/hurling.png
+Disallow: /static/glenariffe_glenravel.png

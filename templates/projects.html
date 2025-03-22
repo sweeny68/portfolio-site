@@ -1,0 +1,388 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>oranmcclintock - Projects</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery.fancybox.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='animate.min.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+    <!-- header section -->
+    <section class="innerbanner" role="banner">
+          <header id="header">
+  <!-- navigation section -->
+  <div class="header-content clearfix">
+    <a class="logo" href="/">Home</a>
+    <nav class="navigation" role="navigation">
+      <ul class="primary-nav">
+        <li><a href="/cv">CV</a></li>
+        <li><a href="/personalstatement">Personal Statement</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="#" class="nav-toggle">Menu<span></span></a>
+  </div>
+  <!-- navigation section -->
+</header>
+
+        <!-- banner text -->
+        <div class="container">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="innerbanner-text text-center">
+                    <p>My Projects</p>
+                    <!-- banner text -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+                <!-- Code display box driving test cancellations-->
+<div class="wrapper-container">
+    <!-- Title -->
+    <h4 class="title">Drving Test Cancellations Script</h4>
+
+    <!-- Scrollable Code Container -->
+    <div class="code-container">
+
+        <pre><code>
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+#User details
+booking_reference = 'xxxxxxxxxx'
+driver_no = 'xxxxxxxx'
+date_of_birth = 'xxxxxxxx'
+
+driver = webdriver.Chrome()
+driver.get('https://dva-bookings.nidirect.gov.uk/MyBookings/FindDriver')
+
+#Log in using Selenium
+def login():
+    try:
+
+        #Access website
+        driver = webdriver.Chrome()
+        driver.get('https://dva-bookings.nidirect.gov.uk/MyBookings/FindDriver')
+
+        #Enter details
+        driver.find_element(By.NAME, 'BookingReference').send_keys(booking_reference)
+        driver.find_element(By.NAME, 'DriverNo').send_keys(driver_no)
+        driver.find_element(By.NAME, 'DateOfBirth').send_keys(date_of_birth)
+        driver.find_element(By.ID, 'btnFind').click()
+
+        #Allow time for page to change
+        time.sleep(1)
+        driver.find_element(By.ID, 'btnChange').click()
+
+        #Keep the program open
+        time.sleep(360)
+
+        #Close browser
+        driver.quit()
+
+    #Print error
+    except Exception as e:
+        print('Exception occurred:', e)
+        print('In the queue. Retrying...\n')
+        time.sleep(5)
+
+login()
+
+        </code></pre>
+
+
+    </div>
+
+    <!-- Description Text -->
+    <div class="description-container">
+        <p>This script automates login and checks for driving test cancellations on the DVLA website using Selenium. It enters user details automatically and retries after an error with a short delay.</p>
+    </div>
+</div>
+
+    </div>
+
+            </div>
+        </div>
+    </section>
+
+<div class="wrapper-container">
+    <!-- Title -->
+    <h4 class="title">Web Scraping Project</h4>
+
+    <!-- Scrollable Code Container -->
+    <div class="code-container">
+        <pre><code>
+import csv
+import re
+import os
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from bs4 import BeautifulSoup
+
+# Path to the extension .crx file
+extension_path = 'xxxx'
+chromedriver_path = 'xxxx'
+
+# Verify the extension file exists
+if not os.path.exists(extension_path):
+    raise FileNotFoundError(f"The extension file at {extension_path} does not exist.")
+
+# Set up Chrome options
+chrome_options = Options()
+chrome_options.add_extension(extension_path)
+
+# Initialize ChromeDriver with the extension
+service = Service(chromedriver_path)
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+# Set page load timeout
+driver.set_page_load_timeout(20)
+
+# Regular expressions
+phone_regex = re.compile(
+    r'\+44\s?\d{4}\s?\d{6}|\(?0\d{4}\)?\d{3}\s?\d{3}|\(?0\d{3}\)?\d{3}\s?\d{4}|\(?0\d{2}\)?\d{4}\s?\d{4}'
+)
+email_regex = re.compile(
+    r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+)
+
+all_data = []
+
+def locate_contact(driver):
+    try:
+        contact_element = driver.find_element(By.XPATH, "//*[contains(text(), 'Contact us') or contains(text(), 'Contact') or contains(text(), 'Get in touch')]")
+        print("Contact us link found")
+    except Exception as e:
+        print(f"Couldn't find a contact page: {e}")
+        return
+
+def get_contact(driver):
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'lxml')
+
+    phone_numbers = phone_regex.findall(soup.get_text())
+    emails = email_regex.findall(soup.get_text())
+
+    phone_numbers = [num for num in phone_numbers if len(num) > 6 and len(num) < 15]
+    phone_numbers = phone_numbers[:3]
+    phone_numbers = list(set(phone_numbers))
+
+    emails = emails[:3]
+    emails = list(set(emails))
+
+    main_page_source = driver.page_source
+    phone_numbers, emails = retry_missing_details(driver, phone_numbers, emails, main_page_source)
+
+    housing_name = driver.title[:53]
+    housing_name = housing_name.replace(',', '|')
+    housing_name = housing_name.replace('-', '|')
+
+    print(housing_name)
+    print(f"Found emails: {emails}")
+    print(f"Found phone numbers: {phone_numbers}")
+    print('----------------------------------------------')
+
+    all_data.append([housing_name, ', '.join(emails), ', '.join(phone_numbers)])
+
+def retry_missing_details(driver, phone_numbers, emails, main_page_source):
+    if not phone_numbers or not emails:
+        print("Retrying main page for missing details")
+        soup = BeautifulSoup(main_page_source, 'lxml')
+
+        new_phone_numbers = phone_regex.findall(soup.get_text())
+        new_emails = email_regex.findall(soup.get_text())
+
+        new_phone_numbers = [num for num in new_phone_numbers if len(num) > 6 and len(num) < 15]
+        new_phone_numbers = list(set(new_phone_numbers))
+
+        new_emails = list(set(new_emails))
+
+        if not phone_numbers:
+            phone_numbers = new_phone_numbers[:3]
+        if not emails:
+            emails = new_emails[:3]
+
+    return phone_numbers, emails
+
+def scrape_contact_details(urls):
+    global all_data
+    all_data = []
+
+    try:
+        for url in urls:
+            try:
+                driver.get(url)
+
+                # Wait for the page to fully load by waiting for a specific element
+                WebDriverWait(driver, 20).until(
+                    EC.presence_of_element_located((By.TAG_NAME, 'body'))  # Change to a more specific element if needed
+                )
+
+                locate_contact(driver)
+                get_contact(driver)
+
+            except TimeoutException:
+                print(f"Page load timed out for URL {url}. Moving to the next URL.")
+                continue  # Skip to the next URL in case of a timeout
+
+            except Exception as e:
+                print(f"Error processing URL {url}: {e}")
+                continue
+
+    finally:
+        csv_file = "housing_associations.csv"
+        with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Housing Association Name", "Contact Email Address", "Telephone Number"])
+
+            all_data_as_tuples = set(tuple(row) for row in all_data)
+            all_data = [list(row) for row in all_data_as_tuples]
+
+            writer.writerows(all_data)
+
+        driver.quit()
+
+    print('done')
+
+# Read URLs from the CSV file
+def read_urls_from_csv(csv_file_path):
+    with open(csv_file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip header row
+        return [row[0] for row in reader]
+
+# Usage
+csv_file_path = 'housing_association_links.csv'
+urls = read_urls_from_csv(csv_file_path)
+scrape_contact_details(urls)
+        </code></pre>
+    </div>
+
+    <!-- Description Text -->
+    <div class="description-container">
+        <p>This script scrapes contact details (phone numbers and emails) from architectural company websites and saves them into a CSV. It uses Selenium for web interaction, BeautifulSoup for parsing, and retries if details are missing.
+        </p>
+    </div>
+</div>
+
+
+<div class="wrapper-container">
+    <!-- Title -->
+    <h4 class="title">Exam Time-Table Script</h4>
+
+    <!-- Scrollable Code Container -->
+    <div class="code-container">
+        <pre><code>
+from data_file import data
+
+# Function to filter exams by subject and level
+def filter_exams_by_subject_and_level(exams, subject_keyword, level_keyword):
+    return [
+        exam for exam in exams
+        if subject_keyword.lower() in exam['Subject'].lower() and level_keyword.lower() in exam['Subject'].lower()
+    ]
+
+def main():
+    subject = input('What subject do you do: ').strip()
+    level = input('AS or A2: ').strip()
+
+    # Validate level input
+    if level.lower() not in ['as', 'a2']:
+        print("Invalid level. Please enter 'AS' or 'A Level'.")
+        return
+
+    # Filter and print exams
+    filtered_exams = filter_exams_by_subject_and_level(data, subject, level)
+
+    if filtered_exams:
+        for exam in filtered_exams:
+            print(f"Unit Code: {exam['Unit Code']}")
+            print(f"Subject: {exam['Subject']}")
+            print(f"Date: {exam['Date']}")
+            print(f"Time: {exam['Time']}")
+            print(f"Duration: {exam['Duration']}")
+            print()  # Newline for better readability
+    else:
+        print(f"No exams found for {subject} at {level} level.")
+
+if __name__ == "__main__":
+    main()
+        </code></pre>
+    </div>
+
+    <!-- Description Text -->
+    <div class="description-container">
+        <p>
+            This script processes CCEA exam data, displaying exam times by subject and level through a user-friendly command-line interface.
+        </p>
+    </div>
+</div>
+
+
+    <!-- contact me section -->
+<!-- footer -->
+<footer class="section footer">
+  <div class="footer-bottom">
+    <div class="container">
+      <div class="col-md-12">
+        <p>
+          <ul style="list-style: none; padding: 0;">
+             <svg enable-background="new 0 0 512 512" id="Layer_1" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="my-svg">
+<a href="https://github.com/sweeny68" target="_blank">
+  <g>
+    <circle cx="256" cy="256" fill="#333333" r="256"></circle>
+    <g>
+      <path d="M256,93.9c-89.5,0-162.1,72.6-162.1,162.1c0,70.5,45,130.4,107.8,152.8c0.3,0.1,1.4,0.5,1.7,0.6 c0.9,0.3,1.9,0.5,2.9,0.5c5.3,0,9.5-4.3,9.5-9.5c0-0.3,0-0.5,0-0.8l0,0c0-8.6,0-19.5,0-28.2c-10.3,2.1-25.9,4.1-34.4,0 c-11-5.3-16.6-12.1-21.9-25.5c-6.6-16.3-21.8-20.8-22.4-23.6c-0.6-2.9,16.1-7.2,24.7,2.7c8.6,9.9,17.3,29.7,35.8,27.8 c9.1-0.9,15-2.4,18.7-3.5c0.7-6.4,2.8-14.3,8.1-19.9c-43.5-7.2-72.5-30.6-72.5-76.5c0-20.9,6-37.1,16.6-49.2 c-1.8-10-4.8-33.2,3.2-41.3c0,0,11.3-7,43.7,15.8c12.1-2.8,25.5-4.2,39.8-4.2l0,0c0.3,0,0.5,0,0.8,0c0.3,0,0.5,0,0.8,0l0,0 c14.4,0.1,27.8,1.5,39.8,4.2c32.4-22.8,43.7-15.8,43.7-15.8c8,8.2,5,31.4,3.2,41.3c10.6,12.2,16.6,28.4,16.6,49.2 c0,45.9-28.9,69.3-72.5,76.5c8.3,8.7,8.6,22.8,8.6,28.6c0,5.5,0,42.3,0,42.5c0,5.3,4.3,9.5,9.5,9.5c0.8,0,1.5-0.1,2.3-0.3 c0.2,0,0.8-0.2,1-0.3c63.5-22,109.1-82.3,109.1-153.3C418.1,166.4,345.5,93.9,256,93.9z" fill="#FFFFFF"></path>
+    </g>
+  </g>
+</a></svg>
+
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="my-svg">
+<a href="https://www.linkedin.com/in/oran-mcclintock-b0b522327" target="_blank">
+<path d="M0 24C0 10.7452 10.7452 0 24 0C37.2548 0 48 10.7452 48 24C48 37.2548 37.2548 48 24 48C10.7452 48 0 37.2548 0 24Z" fill="#0077B5"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M17.3188 14.8227C17.3188 16.3918 16.1377 17.6473 14.2412 17.6473H14.2064C12.3805 17.6473 11.2 16.3918 11.2 14.8227C11.2 13.2204 12.4164 12 14.277 12C16.1377 12 17.2835 13.2204 17.3188 14.8227ZM16.9605 19.8778V36.2196H11.5216V19.8778H16.9605ZM36.5752 36.2196L36.5754 26.8497C36.5754 21.8303 33.8922 19.4941 30.3131 19.4941C27.4254 19.4941 26.1325 21.0802 25.4107 22.1929V19.8783H19.9711C20.0428 21.4117 19.9711 36.22 19.9711 36.22H25.4107V27.0934C25.4107 26.605 25.446 26.1178 25.5898 25.7681C25.9829 24.7924 26.8779 23.7822 28.3805 23.7822C30.3494 23.7822 31.1365 25.2807 31.1365 27.4767V36.2196H36.5752Z" fill="white"/>
+</a></svg>
+
+          </ul>
+        </p>
+        <p>
+          Made by Oran McClintock<br>
+          <i class="fa fa-heart pulse"></i><a href="https://stkillianscollege.co.uk">St Killian's College, Carnlough</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- footer -->
+
+    <!-- JS FILES -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.fancybox.pack.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='retina.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='modernizr.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
