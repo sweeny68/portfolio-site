@@ -7,8 +7,8 @@ app = Flask(__name__)
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'oranmcclintock10@gmail.com'
-app.config['MAIL_PASSWORD'] = 'flaj dkfb rxrb jixq '
+app.config['MAIL_USERNAME'] = 'YOUR EMAIL'
+app.config['MAIL_PASSWORD'] = 'YOUR PASSWORD'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -30,8 +30,8 @@ def contact():
         comments = request.form['comments']
 
         msg = Message("Contact Form Submission",
-                    sender='oranmcclintock10@gmail.com', 
-                    recipients=['oranmcclintock10@gmail.com'])
+                    sender='YOUR EMAIL', 
+                    recipients=['YOUR EMAIL'])
         msg.body = f"Name: {name}\nEmail: {email}\n\n{comments}"
 
         try:
